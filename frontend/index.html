@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InsureFlow AI - Enterprise Insurance & Multi-Agent Claim Adjudication</title>
+  <meta name="description" content="Modern Insurance Management System with Generative AI and multi-agent claim review powered by ChatGPT.">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">🛡️</div>
+        <div class="brand-text">
+          <h1>InsureFlow AI</h1>
+          <span class="brand-badge" id="ai-engine-tag">ChatGPT Hybrid</span>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li>
+          <a class="nav-link active" data-tab="overview" id="nav-overview">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span>Overview</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-link" data-tab="customers" id="nav-customers">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            <span>Customers</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-link" data-tab="policies" id="nav-policies">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span>Policies</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-link" data-tab="payments" id="nav-payments">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+            <span>Payments</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-link" data-tab="claims" id="nav-claims">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            <span>Claims & AI Review</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-link" data-tab="audit" id="nav-audit">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            <span>AI Audit Trail</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-link" data-tab="chat" id="nav-chat">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+            <span>ChatGPT Copilot</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="status-pill">
+          <span><span class="status-indicator" id="db-health-dot"></span>MySQL: <strong id="db-name">insurance_db</strong></span>
+        </div>
+        <button class="btn-settings" id="btn-open-settings">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          AI & API Settings
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <h2 id="page-title">Enterprise Overview</h2>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-refresh-all">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Refresh
+          </button>
+          <button class="btn btn-ai btn-sm" id="btn-top-chat">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Open ChatGPT Copilot
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Views -->
+      <div class="content-area">
+
+        <!-- TAB 1: OVERVIEW -->
+        <section class="tab-pane active" id="pane-overview">
+          <div class="stats-grid">
+            <div class="stat-card blue">
+              <div class="stat-header">
+                <span class="stat-title">Total Customers</span>
+                <div class="stat-icon">👥</div>
+              </div>
+              <div class="stat-value" id="stat-customers">-</div>
+              <div class="stat-sub">Active policyholders</div>
+            </div>
+            <div class="stat-card cyan">
+              <div class="stat-header">
+                <span class="stat-title">Active Policies</span>
+                <div class="stat-icon">📜</div>
+              </div>
+              <div class="stat-value" id="stat-policies">-</div>
+              <div class="stat-sub">Enforced under coverage</div>
+            </div>
+            <div class="stat-card amber">
+              <div class="stat-header">
+                <span class="stat-title">Claims in Pipeline</span>
+                <div class="stat-icon">⚖️</div>
+              </div>
+              <div class="stat-value" id="stat-claims">-</div>
+              <div class="stat-sub" id="stat-claims-sub">Awaiting / in review</div>
+            </div>
+            <div class="stat-card emerald">
+              <div class="stat-header">
+                <span class="stat-title">AI Reviews Completed</span>
+                <div class="stat-icon">🤖</div>
+              </div>
+              <div class="stat-value" id="stat-ai-runs">-</div>
+              <div class="stat-sub">Logged in audit trail</div>
+            </div>
+          </div>
+
+          <!-- Quick Actions & Pipeline -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>⚡</span>
+                <span>Quick Operations</span>
+              </div>
+            </div>
+            <div style="padding: 24px; display: flex; gap: 16px; flex-wrap: wrap;">
+              <button class="btn btn-primary" id="btn-quick-customer">+ Add New Customer</button>
+              <button class="btn btn-secondary" id="btn-quick-policy">+ Issue Policy</button>
+              <button class="btn btn-secondary" id="btn-quick-claim">+ File Claim</button>
+              <button class="btn btn-secondary" id="btn-quick-payment">+ Record Payment</button>
+            </div>
+          </div>
+
+          <!-- Recent AI Audit Runs -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>🔬</span>
+                <span>Recent AI Adjudication Audit Trail</span>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btn-view-all-audits">View All Logs</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="table-overview-audits">
+                <thead>
+                  <tr>
+                    <th>Run ID</th>
+                    <th>Claim</th>
+                    <th>Policy</th>
+                    <th>Claim Amount</th>
+                    <th>Final Decision</th>
+                    <th>Agents Evaluated</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-overview-audits">
+                  <tr><td colspan="7" style="text-align:center; color: var(--text-dim); padding: 30px;">Loading audit trail...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: CUSTOMERS -->
+        <section class="tab-pane" id="pane-customers">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>👥</span>
+                <span>Customer Registry</span>
+              </div>
+              <div class="panel-actions">
+                <input type="text" class="search-input" id="search-customers" placeholder="Search customers...">
+                <button class="btn btn-primary btn-sm" id="btn-add-customer-modal">+ New Customer</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Email Address</th>
+                    <th>Phone</th>
+                    <th>Date of Birth</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-customers">
+                  <tr><td colspan="6" style="text-align:center; color: var(--text-dim); padding: 30px;">Loading customers...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: POLICIES -->
+        <section class="tab-pane" id="pane-policies">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📜</span>
+                <span>Insurance Policies Portfolio</span>
+              </div>
+              <div class="panel-actions">
+                <button class="btn btn-primary btn-sm" id="btn-add-policy-modal">+ Issue Policy</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Policy #</th>
+                    <th>Customer ID</th>
+                    <th>Product</th>
+                    <th>Term Dates</th>
+                    <th>Coverage Amount</th>
+                    <th>Premium</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-policies">
+                  <tr><td colspan="7" style="text-align:center; color: var(--text-dim); padding: 30px;">Loading policies...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: PAYMENTS -->
+        <section class="tab-pane" id="pane-payments">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>💳</span>
+                <span>Premium Collections & Transactions</span>
+              </div>
+              <div class="panel-actions">
+                <button class="btn btn-primary btn-sm" id="btn-add-payment-modal">+ Record Payment</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Policy ID</th>
+                    <th>Reference</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Payment Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-payments">
+                  <tr><td colspan="7" style="text-align:center; color: var(--text-dim); padding: 30px;">Loading payments...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: CLAIMS & AI REVIEW -->
+        <section class="tab-pane" id="pane-claims">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>⚖️</span>
+                <span>Claims Pipeline & AI Automated Review</span>
+              </div>
+              <div class="panel-actions">
+                <button class="btn btn-primary btn-sm" id="btn-add-claim-modal">+ File New Claim</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Claim #</th>
+                    <th>Policy ID</th>
+                    <th>Incident Date</th>
+                    <th>Claimed Amount</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                    <th>AI Adjudication</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-claims">
+                  <tr><td colspan="7" style="text-align:center; color: var(--text-dim); padding: 30px;">Loading claims...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 6: AI AUDIT TRAIL -->
+        <section class="tab-pane" id="pane-audit">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>🔍</span>
+                <span>Multi-Agent Adjudication Audit Log (ai_runs & agent_results)</span>
+              </div>
+              <div class="panel-actions">
+                <span class="badge badge-active">Compliance Verified</span>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Run ID</th>
+                    <th>Claim #</th>
+                    <th>Policy</th>
+                    <th>Amount</th>
+                    <th>Outcome</th>
+                    <th>Agents Triggered</th>
+                    <th>Timestamp</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-audit">
+                  <tr><td colspan="8" style="text-align:center; color: var(--text-dim); padding: 30px;">Loading audit logs...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 7: CHATGPT COPILOT -->
+        <section class="tab-pane" id="pane-chat">
+          <div class="chat-container">
+            <div class="chat-header">
+              <div>
+                <strong style="color: #FFFFFF; font-size: 15px;">🤖 InsureFlow Enterprise Copilot</strong>
+                <div style="font-size: 11px; color: var(--text-muted);" id="chat-engine-status">Connecting to AI engine...</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btn-clear-chat">Clear Conversation</button>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+              <div class="message-bubble assistant">
+                <h3>Hello! I am your InsureFlow AI Copilot.</h3>
+                <p>I can assist you with underwriting guidelines, claim investigations, fraud risk scoring, or policy information.</p>
+                <p>Try clicking one of the sample queries below, or ask me anything!</p>
+              </div>
+            </div>
+
+            <div class="chat-quick-actions">
+              <button class="quick-pill" data-prompt="Explain how the AI Claim Review pipeline works across the 4 agents.">Explain 4-Agent Review</button>
+              <button class="quick-pill" data-prompt="What are the underwriting criteria for active policy coverage?">Policy Coverage Rules</button>
+              <button class="quick-pill" data-prompt="How do I file and evaluate a suspicious hit-and-run claim?">Investigate Hit-and-Run</button>
+              <button class="quick-pill" data-prompt="What happens if a claim amount exceeds the policy coverage limit?">Excess Amount Rules</button>
+            </div>
+
+            <form class="chat-input-bar" id="form-chat">
+              <input type="text" class="chat-input" id="input-chat" placeholder="Ask InsureFlow AI assistant anything about policies, claims, or underwriting..." autocomplete="off">
+              <button type="submit" class="btn btn-primary" id="btn-send-chat">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                Send
+              </button>
+            </form>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Modal: Add Customer -->
+  <div class="modal-backdrop" id="modal-customer">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><span>👤</span> Add Customer</h3>
+        <button class="modal-close" data-close="modal-customer">&times;</button>
+      </div>
+      <form id="form-customer">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="cust-name" required placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" id="cust-email" required placeholder="e.g. john@example.com">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="text" class="form-input" id="cust-phone" required placeholder="e.g. 9876543210">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date of Birth</label>
+              <input type="date" class="form-input" id="cust-dob" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="modal-customer">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Customer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Issue Policy -->
+  <div class="modal-backdrop" id="modal-policy">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><span>📜</span> Issue Insurance Policy</h3>
+        <button class="modal-close" data-close="modal-policy">&times;</button>
+      </div>
+      <form id="form-policy">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Policy Number</label>
+              <input type="text" class="form-input" id="pol-number" required placeholder="POL-2026-XXXX">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Select Customer</label>
+              <select class="form-select" id="pol-customer" required>
+                <option value="">Select customer...</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Insurance Product Line</label>
+            <select class="form-select" id="pol-product" required>
+              <option value="1">Comprehensive Auto Insurance</option>
+              <option value="2">Term Life Insurance</option>
+              <option value="3">Health Plus Premium</option>
+              <option value="4">Homeowners Protection</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Start Date</label>
+              <input type="date" class="form-input" id="pol-start" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">End Date</label>
+              <input type="date" class="form-input" id="pol-end" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Coverage Amount ($)</label>
+              <input type="number" step="0.01" class="form-input" id="pol-coverage" required placeholder="50000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Premium Amount ($)</label>
+              <input type="number" step="0.01" class="form-input" id="pol-premium" required placeholder="1200">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Initial Status</label>
+            <select class="form-select" id="pol-status">
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="modal-policy">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Policy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Record Payment -->
+  <div class="modal-backdrop" id="modal-payment">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><span>💳</span> Record Premium Payment</h3>
+        <button class="modal-close" data-close="modal-payment">&times;</button>
+      </div>
+      <form id="form-payment">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Select Policy</label>
+              <select class="form-select" id="pay-policy" required>
+                <option value="">Select policy...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Amount ($)</label>
+              <input type="number" step="0.01" class="form-input" id="pay-amount" required placeholder="350.00">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Payment Method</label>
+              <select class="form-select" id="pay-method" required>
+                <option value="credit_card">Credit Card</option>
+                <option value="bank_transfer">ACH / Bank Transfer</option>
+                <option value="debit_card">Debit Card</option>
+                <option value="upi">UPI / Instant Transfer</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-select" id="pay-status">
+                <option value="paid">Paid (Cleared)</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Transaction Reference #</label>
+            <input type="text" class="form-input" id="pay-ref" required placeholder="TXN-2026-XXXXXXXX">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="modal-payment">Cancel</button>
+          <button type="submit" class="btn btn-primary">Record Payment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: File Claim -->
+  <div class="modal-backdrop" id="modal-claim">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><span>⚖️</span> File New Claim</h3>
+        <button class="modal-close" data-close="modal-claim">&times;</button>
+      </div>
+      <form id="form-claim">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Claim Number</label>
+              <input type="text" class="form-input" id="clm-number" required placeholder="CLM-2026-XXXX">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Associated Policy</label>
+              <select class="form-select" id="clm-policy" required>
+                <option value="">Select policy...</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Incident Date</label>
+              <input type="date" class="form-input" id="clm-date" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Claim Amount ($)</label>
+              <input type="number" step="0.01" class="form-input" id="clm-amount" required placeholder="3200.00">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Incident Narrative Description</label>
+            <textarea class="form-textarea" rows="4" id="clm-desc" required placeholder="Describe what happened in detail (e.g., location, vehicle damage, eyewitnesses, circumstances)..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="modal-claim">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Claim</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: AI Claim Review Visualizer -->
+  <div class="modal-backdrop" id="modal-ai-review">
+    <div class="modal-dialog lg">
+      <div class="modal-header">
+        <h3><span>🤖</span> Multi-Agent AI Claim Adjudication</h3>
+        <button class="modal-close" data-close="modal-ai-review">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="ai-review-hero">
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--primary-light); font-weight: 700; letter-spacing: 0.05em;">Automated Multi-Agent Assessment</div>
+            <h2 id="ai-modal-claim-number" style="font-size: 22px; margin: 4px 0 8px 0;">Claim Evaluation</h2>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span id="ai-modal-result-badge" class="badge badge-active">Checks Completed</span>
+              <span style="font-size: 12px; color: var(--text-dim);" id="ai-modal-run-id">Run ID #--</span>
+            </div>
+          </div>
+          <div class="risk-meter">
+            <div class="risk-circle" id="ai-risk-score-circle">--</div>
+            <div>
+              <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Risk Score</div>
+              <strong id="ai-recommendation-text" style="font-size: 14px; text-transform: uppercase; color: var(--text-main);">Evaluating...</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px; background: rgba(0,0,0,0.25); border-radius: var(--radius-md); padding: 14px; border: 1px solid var(--border-subtle);">
+          <div style="font-size: 11px; text-transform: uppercase; color: var(--accent-cyan); font-weight: 700; margin-bottom: 6px;">Adjudicator Summary & Reasoning</div>
+          <p id="ai-modal-reasoning" style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">Running agents...</p>
+        </div>
+
+        <h4 style="font-size: 14px; margin-top: 20px; color: var(--text-main);">Active Agent Findings:</h4>
+        <div class="agent-card-grid" id="ai-agent-cards-container">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close="modal-ai-review">Close</button>
+        <button type="button" class="btn btn-ai" id="btn-ask-chatgpt-claim">Discuss with ChatGPT Copilot</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: AI & API Settings -->
+  <div class="modal-backdrop" id="modal-settings">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><span>⚙️</span> AI & ChatGPT Configuration</h3>
+        <button class="modal-close" data-close="modal-settings">&times;</button>
+      </div>
+      <form id="form-settings">
+        <div class="modal-body">
+          <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid var(--border-glow); padding: 12px; border-radius: var(--radius-md); margin-bottom: 18px; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+            InsureFlow AI automatically utilizes <strong>OpenAI ChatGPT</strong> (e.g. <code>gpt-4o-mini</code>) for narrative fraud detection and conversational underwriting. When an API key is not present, the system defaults to our high-accuracy heuristic engine.
+          </div>
+          <div class="form-group">
+            <label class="form-label">OpenAI API Key</label>
+            <input type="password" class="form-input" id="setting-api-key" placeholder="sk-proj-... (leave blank to use current environment value)">
+            <small style="font-size: 11px; color: var(--text-dim); display: block; margin-top: 4px;" id="current-key-status">Status: Checking...</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label">OpenAI Model</label>
+            <input type="text" class="form-input" id="setting-model" placeholder="gpt-4o-mini">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Base URL (Optional for Azure or compatible gateways)</label>
+            <input type="text" class="form-input" id="setting-base-url" placeholder="https://api.openai.com/v1">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="modal-settings">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Settings</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JavaScript App Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
