@@ -441,6 +441,50 @@ curl -X GET http://localhost:8001/api/v1/ai/status
 
 ---
 
+## 🔧 Troubleshooting Guide
+
+### 1. Database Connection Error
+If the application fails to connect to MySQL:
+
+- Verify that the MySQL server is running.
+- Check the database credentials in the `.env` file.
+- Ensure that the `insurance_db` database exists.
+- Confirm that MySQL is listening on the configured port (default: 3306).
+
+### 2. Missing Python Dependencies
+If you encounter a `ModuleNotFoundError`, install the required dependencies:
+
+```bash
+pip install -r backend/requirements.txt
+```
+
+Make sure the correct Python virtual environment is activated.
+
+### 3. OpenAI API Not Working
+If AI-powered features are unavailable:
+
+- Verify that the `OPENAI_API_KEY` is configured correctly.
+- Check your internet connection and API access.
+- Confirm that the configured model is available to your API account.
+
+The application also supports a heuristic fallback engine when OpenAI access is unavailable.
+
+### 4. Frontend Not Loading
+If the dashboard doesn't load:
+
+- Confirm that the FastAPI server is running.
+- Open `http://localhost:8001/app`.
+- Check the browser developer console for JavaScript errors.
+- Verify that the frontend files are present in the `frontend` directory.
+
+### 5. API Endpoint Errors
+If an API request fails:
+
+- Visit `http://localhost:8001/docs` to inspect the API documentation.
+- Confirm that the request method and endpoint are correct.
+- Verify that the required request parameters are supplied.
+- Check the FastAPI terminal logs for error details.
+
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
